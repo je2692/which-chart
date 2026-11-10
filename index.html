@@ -3,246 +3,250 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Which Chart?</title>
-<meta name="description" content="Guess which Billboard chart each record landed on, 1945–1958.">
 <meta name="theme-color" content="#1C1714">
+<style>
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Who Got Paid?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@500;600&display=swap">
 <style>
+  /* Layout: one royalty-statement card per record on a dark record-shop ground; the guess is a ledger line you drag. */
   :root {
+    --ground: #1C1714;
+    --ground-2: #2A231E;
+    --line: #3A322D;
+    --paper: #F6EFE2;
+    --paper-rule: #DCCFBA;
     --ink: #1C1714;
-    --ink-2: #2A231E;
-    --ink-3: #3A322D;
+    --ink-soft: #5A4D44;
     --cream: #F3ECDF;
-    --paper: #FBF7EE;
-    --muted: #D9CFBF;
+    --muted: #CFC4B3;
     --red: #B23E24;
-    --mustard: #E0A93B;
-    --good: #7FB77E;
+    --gold: #E0A93B;
     --display: 'Oswald', 'Arial Narrow', Arial, sans-serif;
-    --serif: 'Libre Baskerville', Georgia, serif;
-    --mono: 'Courier Prime', 'Courier New', monospace;
+    --body: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+    --mono: 'Courier Prime', 'Courier New', Courier, monospace;
+    color-scheme: dark;
   }
+  html, body { height: 100%; }
+  body { background: var(--ground); color: var(--cream); font-family: var(--body); -webkit-font-smoothing: antialiased; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body {
-    background: var(--ink);
-    color: var(--cream);
-    font-family: var(--serif);
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-    min-height: 100dvh;
+  button { font: inherit; cursor: pointer; }
+  button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  .wrap {
+    max-width: 540px; margin: 0 auto; min-height: 100%;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 20px 28px;
+    display: flex; flex-direction: column; gap: 18px;
   }
-  button { font: inherit; color: inherit; cursor: pointer; }
-  [hidden] { display: none !important; }
-
-  /* ---------- player (phone) ---------- */
-  .player {
-    max-width: 520px;
-    margin: 0 auto;
-    padding: max(20px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    min-height: 100vh;
-    min-height: 100dvh;
-  }
-  .topbar { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-  .eyebrow { font-family: var(--mono); font-size: 14px; letter-spacing: 2px; text-transform: uppercase; color: var(--mustard); }
-  .count { font-family: var(--mono); font-size: 14px; color: var(--muted); }
-  .dots { display: flex; gap: 6px; }
-  .dot { flex: 1; height: 4px; background: var(--ink-3); border-radius: 2px; }
-  .dot.done { background: var(--mustard); }
-  .dot.now { background: var(--cream); }
-
-  .intro h1, .end h1 {
-    font-family: var(--display); font-weight: 600; font-size: 64px; line-height: 0.95; margin: 8px 0 0;
-  }
-  .lede { font-size: 18px; line-height: 1.55; color: var(--muted); margin: 0; }
-  .lede b { color: var(--cream); font-weight: 700; }
-
-  .strip {
-    background: var(--paper); color: var(--ink);
-    border: 3px solid var(--mustard);
-    text-align: center;
-  }
-  .strip .band { height: 12px; background: var(--red); }
-  .strip .inner { padding: 18px 16px 16px; display: flex; flex-direction: column; gap: 6px; }
-  .strip .song { font-family: var(--mono); font-weight: 700; font-size: 22px; text-transform: uppercase; line-height: 1.15; }
-  .strip .artist { font-family: var(--mono); font-size: 15px; text-transform: uppercase; }
-  .strip .meta { font-family: var(--mono); font-size: 14px; color: var(--red); text-transform: uppercase; }
-  .clue { font-style: italic; font-size: 16px; line-height: 1.5; color: var(--muted); margin: 0; }
-
-  .q { font-family: var(--display); font-weight: 500; font-size: 26px; line-height: 1.15; margin: 0; }
-  .legend { font-family: var(--mono); font-size: 13px; line-height: 1.45; color: var(--muted); margin: -10px 0 0; }
-
-  .opts { display: flex; flex-direction: column; gap: 10px; }
-  .opt {
-    display: flex; justify-content: space-between; align-items: center; gap: 12px;
-    width: 100%; min-height: 56px; padding: 12px 18px;
-    background: var(--ink-2); border: 2px solid var(--ink-3); border-radius: 10px;
-    font-family: var(--mono); font-size: 18px; text-align: left;
-    transition: background .15s, border-color .15s, transform .08s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .opt:active { transform: scale(0.985); }
-  .opt .tag { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
-  .opt[disabled] { cursor: default; opacity: 0.55; }
-  .opt.right { opacity: 1; background: var(--cream); color: var(--ink); border-color: var(--cream); }
-  .opt.wrong { opacity: 1; border-color: var(--red); background: #3a1d16; }
-
-  .reveal { display: flex; flex-direction: column; gap: 10px; border-left: 4px solid var(--mustard); padding: 4px 0 4px 16px; }
-  .verdict { font-family: var(--display); font-weight: 600; font-size: 28px; margin: 0; }
-  .verdict.yes { color: var(--mustard); }
-  .verdict.no { color: #F08F75; }
-  .why { font-size: 16px; line-height: 1.55; margin: 0; }
-  .src { font-family: var(--mono); font-size: 13px; color: var(--muted); margin: 0; }
-
-  .primary {
-    width: 100%; min-height: 56px; border: 0; border-radius: 10px;
-    background: var(--mustard); color: var(--ink);
-    font-family: var(--display); font-weight: 600; font-size: 22px; letter-spacing: 0.5px;
-  }
-  .ghost { background: none; border: 0; color: var(--muted); font-family: var(--mono); font-size: 14px; text-decoration: underline; padding: 8px; align-self: center; }
+  .eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin: 0; }
   .spacer { flex: 1; }
 
-  .score { font-family: var(--display); font-weight: 600; font-size: 120px; line-height: 1; color: var(--mustard); margin: 0; }
-  .score small { font-size: 48px; color: var(--muted); }
-  .takeaway { font-size: 20px; line-height: 1.5; margin: 0; }
-  .lookup { font-family: var(--mono); font-size: 15px; letter-spacing: 1px; text-transform: uppercase; color: var(--mustard); margin: 0; }
-
-  /* ---------- host (projector) ---------- */
-  .host { min-height: 100vh; display: flex; flex-direction: column; padding: 5vh 6vw; gap: 4vh; }
-  .host .row { flex: 1; display: grid; grid-template-columns: 1.15fr 1fr; gap: 5vw; align-items: center; }
-  .host h1 { font-family: var(--display); font-weight: 600; font-size: min(14vw, 15vh); line-height: 0.92; margin: 0; }
-  .host .sub { font-size: min(2.4vw, 3.4vh); line-height: 1.45; color: var(--muted); margin: 3vh 0 0; max-width: 34ch; }
-  .host .url { font-family: var(--mono); font-size: min(1.6vw, 2.4vh); color: var(--mustard); margin: 3vh 0 0; word-break: break-all; }
-  .qrbox { background: var(--cream); padding: 3vh; justify-self: center; width: min(40vw, 70vh); aspect-ratio: 1; display: grid; place-items: center; }
-  .qrbox svg { width: 100%; height: 100%; display: block; }
-  .host .foot { display: flex; justify-content: space-between; align-items: center; gap: 24px; font-family: var(--mono); font-size: min(1.4vw, 2.2vh); color: var(--muted); }
-  .timer { font-family: var(--display); font-weight: 600; font-size: min(6vw, 9vh); color: var(--cream); font-variant-numeric: tabular-nums; }
-  .timer.out { color: var(--mustard); }
-  .hbtn { background: var(--ink-2); border: 2px solid var(--ink-3); border-radius: 8px; padding: 10px 18px; font-family: var(--mono); font-size: min(1.4vw, 2.2vh); color: var(--cream); }
-  .hbtns { display: flex; gap: 12px; align-items: center; }
-
-  .walk { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center; }
-  .walk .strip .song { font-size: min(3.2vw, 5vh); }
-  .walk .strip .artist { font-size: min(1.8vw, 2.8vh); }
-  .walk .strip .meta { font-size: min(1.6vw, 2.5vh); }
-  .walk .strip .inner { padding: 4vh 3vw; gap: 1.4vh; }
-  .walk .strip .band { height: 2.2vh; }
-  .walk .clue { font-size: min(1.8vw, 2.8vh); margin-top: 3vh; }
-  .walk .opts { gap: 1.4vh; }
-  .walk .opt { min-height: 0; padding: 1.6vh 1.6vw; font-size: min(2vw, 3vh); border-radius: 10px; }
-  .walk .opt .tag { font-size: min(1.2vw, 1.9vh); }
-  .walk .reveal { margin-top: 3vh; }
-  .walk .verdict { font-size: min(2.6vw, 4vh); }
-  .walk .why { font-size: min(1.7vw, 2.6vh); }
-  .walk .src { font-size: min(1.2vw, 1.9vh); }
-  .walk .q { font-size: min(2.4vw, 3.6vh); margin-bottom: 2vh; }
-
-  @media (max-width: 800px) {
-    .host .row, .walk { grid-template-columns: 1fr; }
-    .qrbox { width: 80vw; }
+  /* intro + end */
+  .big { font-family: var(--display); font-weight: 600; font-size: clamp(56px, 17vw, 84px); line-height: 0.92; margin: 0; text-wrap: balance; }
+  .lede { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0; max-width: 60ch; }
+  .lede b { color: var(--cream); }
+  .primary {
+    width: 100%; min-height: 56px; border: 0; border-radius: 10px;
+    background: var(--gold); color: var(--ink);
+    font-family: var(--display); font-weight: 600; font-size: 22px; letter-spacing: 0.5px;
   }
+  .primary:disabled { opacity: 0.4; cursor: default; }
+  .quiet { background: none; border: 0; color: var(--muted); font-family: var(--mono); font-size: 13px; text-decoration: underline; padding: 8px; align-self: center; }
+
+  /* progress */
+  .top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .count { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .ticks { display: flex; gap: 6px; }
+  .tick { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+  .tick.done { background: var(--gold); }
+  .tick.now { background: var(--cream); }
+
+  /* the statement card */
+  .card { background: var(--paper); color: var(--ink); border-radius: 4px; overflow: hidden; position: relative; }
+  .card-head { display: flex; justify-content: space-between; gap: 12px; padding: 12px 18px; background: var(--red); color: var(--paper); font-family: var(--mono); font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
+  .card-body { padding: 18px 18px 22px; display: flex; flex-direction: column; gap: 14px; }
+  .rec { display: flex; flex-direction: column; gap: 4px; border-bottom: 1px dashed var(--paper-rule); padding-bottom: 14px; }
+  .rec-title { font-family: var(--display); font-weight: 600; font-size: 30px; line-height: 1.05; margin: 0; text-wrap: balance; }
+  .rec-meta { font-family: var(--mono); font-size: 14px; color: var(--ink-soft); margin: 0; }
+  .q { font-size: 17px; line-height: 1.55; margin: 0; }
+
+  .readout { font-family: var(--display); font-weight: 600; font-size: 52px; line-height: 1; margin: 6px 0 0; font-variant-numeric: tabular-nums; }
+  .readout small { font-family: var(--mono); font-weight: 400; font-size: 13px; letter-spacing: 1px; color: var(--ink-soft); text-transform: uppercase; display: block; margin-bottom: 6px; }
+
+  .slider { position: relative; padding-top: 30px; padding-bottom: 6px; }
+  .slider input {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 36px; background: transparent; margin: 0; display: block;
+    --pct: 50%;
+  }
+  .slider input::-webkit-slider-runnable-track { height: 10px; border-radius: 5px; background: linear-gradient(90deg, var(--ink) var(--pct), var(--paper-rule) var(--pct)); }
+  .slider input::-moz-range-track { height: 10px; border-radius: 5px; background: var(--paper-rule); }
+  .slider input::-moz-range-progress { height: 10px; border-radius: 5px; background: var(--ink); }
+  .slider input::-webkit-slider-thumb { -webkit-appearance: none; width: 34px; height: 34px; border-radius: 50%; background: var(--gold); border: 4px solid var(--ink); margin-top: -12px; }
+  .slider input::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; background: var(--gold); border: 4px solid var(--ink); }
+  .slider input:disabled::-webkit-slider-thumb { background: var(--paper); }
+  .slider input:disabled::-moz-range-thumb { background: var(--paper); }
+  .ends { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
+  .marker { position: absolute; top: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+  .marker span { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; background: var(--red); color: var(--paper); padding: 2px 6px; border-radius: 3px; }
+  .marker i { display: block; width: 3px; height: 34px; background: var(--red); }
+
+  .stamp {
+    align-self: flex-start; font-family: var(--mono); font-weight: 700; font-size: 26px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--red); border: 4px solid var(--red); border-radius: 6px; padding: 4px 12px; transform: rotate(-4deg);
+    animation: stamp .28s ease-out;
+  }
+  @keyframes stamp { from { transform: rotate(-4deg) scale(1.6); opacity: 0; } to { transform: rotate(-4deg) scale(1); opacity: 1; } }
+  .verdict { font-family: var(--mono); font-size: 14px; line-height: 1.5; margin: 0; }
+  .verdict b { color: var(--red); }
+  .why { font-size: 16px; line-height: 1.6; margin: 0; }
+  .src { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); margin: 0; }
+
+  /* end */
+  .score { font-family: var(--display); font-weight: 600; font-size: 120px; line-height: 0.9; color: var(--gold); margin: 0; font-variant-numeric: tabular-nums; }
+  .score small { font-size: 44px; color: var(--muted); }
+  .takeaway { font-size: 20px; line-height: 1.5; margin: 0; text-wrap: balance; }
+  .ledger { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .ledger li { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 13px; align-items: baseline; }
+  .ledger .t { color: var(--cream); min-width: 0; }
+  .ledger .g { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .ledger .r { color: var(--gold); font-variant-numeric: tabular-nums; }
+
+  /* presenter screen */
+  .host { min-height: 100%; display: flex; flex-direction: column; gap: 4vh;
+    padding-left: max(5vw, env(safe-area-inset-left, 0px)); padding-right: max(5vw, env(safe-area-inset-right, 0px)); padding-block: 5vh; }
+  .lobby { flex: 1; display: grid; grid-template-columns: 1.1fr 1fr; gap: 5vw; align-items: center; }
+  .lobby h1 { font-family: var(--display); font-weight: 600; font-size: min(12vw, 15vh); line-height: 0.92; margin: 1.5vh 0 0; }
+  .lobby .lede { font-size: min(2.2vw, 3.2vh); margin-top: 3vh; }
+  .lobby .eyebrow { font-size: min(1.5vw, 2.2vh); }
+  .qr { background: var(--cream); padding: 3vh; width: min(38vw, 66vh); max-width: 100%; aspect-ratio: 1; justify-self: center; display: grid; place-items: center; }
+  .qr svg { width: 100%; height: 100%; display: block; }
+  .qr p { color: var(--ink); font-family: var(--mono); text-align: center; }
+  .walk { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; }
+  .walk .card { max-width: 1100px; width: 100%; justify-self: center; }
+  .walk .card-head { font-size: min(1.3vw, 2vh); padding: 1.6vh 2vw; }
+  .walk .card-body { padding: 3vh 2.4vw 3.4vh; gap: 2vh; }
+  .walk .rec-title { font-size: min(3.6vw, 5.4vh); }
+  .walk .rec-meta { font-size: min(1.5vw, 2.3vh); }
+  .walk .q { font-size: min(2vw, 3vh); }
+  .walk .stamp { font-size: min(2.6vw, 4vh); }
+  .walk .why { font-size: min(1.7vw, 2.6vh); }
+  .walk .src { font-size: min(1.2vw, 1.8vh); }
+  .walk .ends { font-size: min(1.2vw, 1.8vh); }
+  .walk .marker span { font-size: min(1.2vw, 1.8vh); }
+  .bar { position: relative; height: 14px; border-radius: 7px; background: var(--paper-rule); margin-top: 6vh; }
+  .bar .marker { top: auto; bottom: 0; }
+  .bar .marker i { height: 7vh; }
+  .foot { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .timer { font-family: var(--display); font-weight: 600; font-size: min(6vw, 9vh); font-variant-numeric: tabular-nums; }
+  .timer.out { color: var(--gold); }
+  .hbtns { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .hbtn { background: var(--ground-2); border: 2px solid var(--line); border-radius: 8px; padding: 10px 18px; font-family: var(--mono); font-size: min(1.4vw, 2.2vh); color: var(--cream); }
+
+  @media (max-width: 800px) { .lobby { grid-template-columns: 1fr; } .qr { width: 80vw; } }
+  @media (prefers-reduced-motion: reduce) { .stamp { animation: none; } }
 </style>
 </head>
 <body>
 
-<!-- PLAYER -->
-<main class="player" id="player" hidden>
-  <section class="intro" id="intro">
-    <div style="display:flex;flex-direction:column;gap:18px">
-      <p class="eyebrow">American Popular Music · R&amp;B</p>
-      <h1>Which chart?</h1>
-      <p class="lede">Seven real records from 1945–1958. For each one, guess which <b>Billboard</b> charts it made: pop, R&amp;B, country, all three, or none.</p>
-      <p class="lede">Takes about three minutes. No sign-up, nothing saved.</p>
-    </div>
+<main class="wrap" id="player" hidden>
+  <section id="intro" style="display:flex;flex-direction:column;gap:18px">
+    <p class="eyebrow">American Popular Music · R&amp;B, 1945–1958</p>
+    <h1 class="big">Who got paid?</h1>
+    <p class="lede">Seven real records and deals. For each one, drag the slider to guess how much <b>credit, money or airtime</b> went to the people who made the music. Then see what really happened.</p>
+    <p class="lede">About three minutes. No sign-up, nothing saved.</p>
   </section>
 
-  <section id="round" hidden style="display:flex;flex-direction:column;gap:20px">
+  <section id="round" hidden style="display:flex;flex-direction:column;gap:16px">
     <div style="display:flex;flex-direction:column;gap:10px">
-      <div class="topbar"><span class="eyebrow">Which chart?</span><span class="count" id="count"></span></div>
-      <div class="dots" id="dots"></div>
+      <div class="top"><span class="eyebrow">Who got paid?</span><span class="count" id="count"></span></div>
+      <div class="ticks" id="ticks"></div>
     </div>
-    <div class="strip">
-      <div class="band"></div>
-      <div class="inner">
-        <div class="song" id="song"></div>
-        <div class="artist" id="artist"></div>
-        <div class="meta" id="meta"></div>
+    <article class="card">
+      <div class="card-head"><span id="stmt"></span><span id="kind"></span></div>
+      <div class="card-body">
+        <div class="rec">
+          <h2 class="rec-title" id="title"></h2>
+          <p class="rec-meta" id="meta"></p>
+        </div>
+        <p class="q" id="q"></p>
+        <p class="readout" aria-live="polite"><small>Your guess</small><span id="readout"></span></p>
+        <div class="slider" id="sliderbox">
+          <label for="guess" class="eyebrow" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Your guess</label>
+          <input type="range" id="guess">
+        </div>
+        <div class="ends"><span id="lo"></span><span id="hi"></span></div>
+        <div id="reveal" hidden style="display:flex;flex-direction:column;gap:12px" aria-live="polite">
+          <div class="stamp" id="stamp"></div>
+          <p class="verdict" id="verdict"></p>
+          <p class="why" id="why"></p>
+          <p class="src" id="src"></p>
+        </div>
       </div>
-    </div>
-    <p class="clue" id="clue"></p>
-    <p class="q">Which Billboard charts did it make?</p>
-    <p class="legend">R&amp;B = the “Race” chart before 1949. All three = pop, R&amp;B and country.</p>
-    <div class="opts" id="opts" role="group" aria-label="Your answer"></div>
-    <div class="reveal" id="reveal" hidden aria-live="polite">
-      <p class="verdict" id="verdict"></p>
-      <p class="why" id="why"></p>
-      <p class="src" id="src"></p>
-    </div>
+    </article>
   </section>
 
-  <section class="end" id="end" hidden style="display:flex;flex-direction:column;gap:22px">
-    <p class="eyebrow">Your score</p>
+  <section id="end" hidden style="display:flex;flex-direction:column;gap:20px">
+    <p class="eyebrow">Your statement</p>
     <p class="score" id="score"></p>
     <p class="lede" id="scoreline"></p>
-    <p class="takeaway">Notice the pattern? The charts tracked <b>who was buying</b>, not what the music sounded like.</p>
-    <p class="lookup">Eyes back up front.</p>
+    <p class="takeaway">Credit, money and airtime kept flowing <b>away from the people who made the music</b>.</p>
+    <ul class="ledger" id="ledger"></ul>
+    <p class="eyebrow">Eyes back up front.</p>
   </section>
 
   <div class="spacer"></div>
-  <button class="primary" id="go">Start</button>
-  <button class="ghost" id="again" hidden>Play again</button>
+  <button class="primary" id="go" type="button">Start</button>
+  <button class="quiet" id="again" type="button" hidden>Play again</button>
+  <button class="quiet" id="tohost" type="button">Presenter screen</button>
 </main>
 
-<!-- HOST -->
 <main class="host" id="host" hidden>
-  <div class="row" id="lobby">
+  <div class="lobby" id="lobby">
     <div>
-      <p class="eyebrow" style="font-size:min(1.6vw,2.4vh)">Phones out</p>
-      <h1>Which chart?</h1>
-      <p class="sub">Point your phone camera at the code. Seven records, about three minutes.</p>
-      <p class="url" id="url"></p>
+      <p class="eyebrow">Phones out</p>
+      <h1>Who got paid?</h1>
+      <p class="lede">Scan the code with your phone camera. Seven records, about three minutes.</p>
     </div>
-    <div class="qrbox" id="qr" role="img" aria-label="QR code that opens the game"></div>
+    <div class="qr" id="qr" role="img" aria-label="QR code that opens the game"></div>
   </div>
 
   <div class="walk" id="walk" hidden>
-    <div>
-      <p class="eyebrow" id="wcount" style="font-size:min(1.4vw,2.2vh);margin:0 0 2vh"></p>
-      <div class="strip">
-        <div class="band"></div>
-        <div class="inner">
-          <div class="song" id="wsong"></div>
-          <div class="artist" id="wartist"></div>
-          <div class="meta" id="wmeta"></div>
+    <article class="card">
+      <div class="card-head"><span id="hstmt"></span><span id="hkind"></span></div>
+      <div class="card-body">
+        <div class="rec">
+          <h2 class="rec-title" id="htitle"></h2>
+          <p class="rec-meta" id="hmeta"></p>
+        </div>
+        <p class="q" id="hq"></p>
+        <div class="bar" id="hbar"></div>
+        <div class="ends"><span id="hlo"></span><span id="hhi"></span></div>
+        <div id="hreveal" hidden style="display:flex;flex-direction:column;gap:1.6vh">
+          <div class="stamp" id="hstamp"></div>
+          <p class="why" id="hwhy"></p>
+          <p class="src" id="hsrc"></p>
         </div>
       </div>
-      <p class="clue" id="wclue"></p>
-    </div>
-    <div>
-      <p class="q">Hands up: who picked…</p>
-      <div class="opts" id="wopts"></div>
-      <div class="reveal" id="wreveal" hidden>
-        <p class="verdict yes" id="wverdict"></p>
-        <p class="why" id="wwhy"></p>
-        <p class="src" id="wsrc"></p>
-      </div>
-    </div>
+    </article>
   </div>
 
   <div class="foot">
     <div class="hbtns">
       <span class="timer" id="timer">3:00</span>
-      <button class="hbtn" id="tstart">Start timer</button>
+      <button class="hbtn" id="tstart" type="button">Start timer</button>
     </div>
     <div class="hbtns">
-      <button class="hbtn" id="hback" hidden>QR code</button>
-      <button class="hbtn" id="hprev" hidden>← Back</button>
-      <button class="hbtn" id="hnext">Go over answers →</button>
+      <button class="hbtn" id="hback" type="button" hidden>QR code</button>
+      <button class="hbtn" id="hprev" type="button" hidden>← Back</button>
+      <button class="hbtn" id="hnext" type="button">Go over answers →</button>
     </div>
   </div>
 </main>
@@ -2551,244 +2555,223 @@ var qrcode = function() {
 (function () {
   'use strict';
 
-  var OPTS = [
-    { id: 'rb',    label: 'R&B only' },
-    { id: 'pop',   label: 'Pop only' },
-    { id: 'poprb', label: 'Pop + R&B' },
-    { id: 'all',   label: 'All three' },
-    { id: 'none',  label: 'None of them' }
-  ];
-  var LABEL = {};
-  OPTS.forEach(function (o) { LABEL[o.id] = o.label; });
+  // Fill in after publishing so the presenter QR points at the shareable link.
+  var SHARE_URL = '';
 
+  var money = function (v) { return '$' + Math.round(v).toLocaleString('en-US'); };
+  var pct = function (v) { return Math.round(v) + '%'; };
+
+  // generous: which side of the real answer means "you gave the artist more than they got"
   var ROUNDS = [
     {
-      song: 'Three O’Clock Blues', artist: 'B.B. King', meta: 'RPM · 1952',
-      clue: 'A Memphis bluesman who also worked as a DJ on a Black-run radio station.',
-      answer: 'rb',
-      why: '#1 on the R&B chart for five weeks, and nowhere on the pop chart. Remember this name.',
-      src: 'Ewen, p. 545'
+      title: 'Caldonia', meta: 'Louis Jordan · Decca, 1945', kind: 'Songwriting credit',
+      q: 'Louis Jordan wrote and recorded “Caldonia.” What share of the songwriting credit has his name on it?',
+      min: 0, max: 100, step: 1, start: 50, fmt: pct, answer: 0, generous: 'higher',
+      stamp: 'Credited: 0%',
+      why: 'None. He put the song in his wife Fleecie Moore’s name to get around a publishing deal he was already signed to. After they divorced, she kept the rights.',
+      src: 'Ewen, p. 543; Louis Jordan biography'
     },
     {
-      song: 'Caldonia', artist: 'Louis Jordan & His Tympany Five', meta: 'Decca · 1945',
-      clue: 'Jump blues from the “King of the Jukebox.” You just heard it.',
-      answer: 'poprb',
-      why: '#1 on the race chart and #6 on the pop chart. White record buyers wanted Louis Jordan too.',
-      src: 'Billboard, 1945'
+      title: 'Maybellene', meta: 'Chuck Berry · Chess, 1955', kind: 'Songwriting credit',
+      q: 'Chuck Berry wrote “Maybellene” by himself. What share of the songwriting credit did the 1955 record give him?',
+      min: 0, max: 100, step: 1, start: 50, fmt: pct, answer: 33, generous: 'higher',
+      stamp: 'Credited: one third',
+      why: 'One third. DJ Alan Freed and Russ Fratto, who reportedly had lent Chess money, were listed as co-writers. Giving a DJ a writing credit was a common form of payola. Berry won full credit back in 1986.',
+      src: 'Ewen, p. 543'
     },
     {
-      song: 'That’s My Desire', artist: 'Frankie Laine', meta: 'Mercury · 1947',
-      clue: 'A white Italian-American nightclub singer, born Francesco LoVecchio.',
-      answer: 'poprb',
-      why: '#4 pop, and #4 on the race chart. He sounded bluesy, so Billboard counted him as “race.” The label followed the sound and the buyers, not the singer.',
-      src: 'Wald, How the Beatles Destroyed Rock ’n’ Roll'
+      title: 'Hound Dog', meta: 'Big Mama Thornton · Peacock, 1953', kind: 'Payment',
+      q: 'Big Mama Thornton’s “Hound Dog” was a #1 R&B hit. How much was she paid for it?',
+      min: 0, max: 20000, step: 100, start: 10000, fmt: money, answer: 500, generous: 'higher',
+      stamp: 'Paid: about $500',
+      why: 'Reportedly about $500. Three years later Elvis Presley recorded the song, and it helped make him the biggest star in the country.',
+      src: 'Encyclopaedia Britannica; Wald, p. 180'
     },
     {
-      song: 'Cold, Cold Heart', artist: 'Written by Hank Williams', meta: '1951',
-      clue: 'A country weeper by Nashville’s biggest songwriter.',
-      answer: 'all',
-      why: 'All three, in three different versions: Hank Williams on country, Tony Bennett at #1 pop, Dinah Washington on R&B. Same song, three markets.',
-      src: 'Wald, p. 177'
+      title: 'Ain’t That a Shame', meta: 'Fats Domino · Imperial, 1955', kind: 'Chart position',
+      q: 'Pat Boone’s cover of this song went to #1. How high did Fats Domino’s original get on the pop chart?',
+      min: 1, max: 40, step: 1, start: 20, fmt: function (v) { return '#' + Math.round(v); }, answer: 10, generous: 'lower',
+      lo: '#1', hi: '#40',
+      stamp: 'Peaked: #10 pop',
+      why: '#10. Domino’s original topped the R&B chart, but on the pop chart the cover by a white singer went higher.',
+      src: 'Ewen, p. 554; Billboard'
     },
     {
-      song: 'Hound Dog / Don’t Be Cruel', artist: 'Elvis Presley', meta: 'RCA Victor · 1956',
-      clue: 'A 21-year-old from Tupelo, Mississippi, in his first year on RCA.',
-      answer: 'all',
-      why: '#1 on pop, R&B and country at the same time. The first white artist at #1 R&B in almost five years.',
-      src: 'Wald, p. 180'
+      title: 'Sonny Rollins', meta: 'Prestige Records · 1950s', kind: 'Publishing',
+      q: 'When jazz saxophonist Sonny Rollins recorded songs he wrote for Prestige, how much of his publishing royalties did the label keep?',
+      min: 0, max: 100, step: 1, start: 50, fmt: pct, answer: 50, generous: 'lower',
+      stamp: 'Label kept: 50%',
+      why: 'Half. “Prestige would publish my music and take 50 percent,” Rollins said. Labels set up their own publishing companies and took a cut for filling out the paperwork.',
+      src: 'Myers, p. 138'
     },
     {
-      song: 'Honeycomb', artist: 'Jimmie Rodgers', meta: 'Roulette · 1957',
-      clue: 'Clean-cut white teen pop. (Not the 1920s country star with the same name.)',
-      answer: 'all',
-      why: '#1 pop, #1 R&B and #7 country. The stores that reported “R&B” sales were now selling to white teenagers, so teen pop topped the R&B chart.',
-      src: 'Wald, p. 181'
+      title: 'The Nat King Cole Show', meta: 'NBC · 1956–57', kind: 'Airtime',
+      q: 'Nat King Cole got his own network TV show, and viewers tuned in. How many regular national sponsors signed on?',
+      min: 0, max: 20, step: 1, start: 10, fmt: function (v) { return String(Math.round(v)); }, answer: 0, generous: 'higher',
+      stamp: 'Sponsors: 0',
+      why: 'None. Advertisers didn’t want their products tied to a Black star. Cole gave up the show and said, “Madison Avenue is afraid of the dark.”',
+      src: 'Wald, p. 173'
     },
     {
-      song: 'Any new record', artist: 'B.B. King', meta: '1958',
-      clue: 'Still selling well to Black listeners, just like in 1952.',
-      answer: 'none',
-      why: 'None. White teen records crowded him off the R&B chart. In October 1958 Billboard changed its rules, and he was back in the R&B top ten within a month.',
-      src: 'Wald, p. 181'
+      title: 'Billboard R&B chart', meta: 'Sept 1957 – Oct 1958', kind: 'The chart',
+      q: 'On the chart that used to be called “Race Records,” what share of the #1 hits were by white artists?',
+      min: 0, max: 100, step: 1, start: 50, fmt: pct, answer: 57, generous: 'lower',
+      stamp: 'White artists: 57%',
+      why: '57%, or 16 of the 28 #1 records. Stores that used to sell to Black buyers were now selling to white teenagers, and B.B. King and Ray Charles dropped off the chart.',
+      src: 'Wald, pp. 180–181'
     }
   ];
 
   function $(id) { return document.getElementById(id); }
   function show(el, on) { el.hidden = !on; }
+  function frac(r, v) { return (v - r.min) / (r.max - r.min); }
+  function close(r, v) { return Math.abs(frac(r, v) - frac(r, r.answer)) <= 0.05; }
+  function wasGenerous(r, v) { return !close(r, v) && (r.generous === 'higher' ? v > r.answer : v < r.answer); }
+  function wasHarsh(r, v) { return !close(r, v) && !wasGenerous(r, v); }
+  // pixel-true position along a range input: thumb centre runs from half a thumb in, to half a thumb short
+  function thumbLeft(r, v, thumb) { return 'calc(' + (thumb / 2) + 'px + (100% - ' + thumb + 'px) * ' + frac(r, v).toFixed(4) + ')'; }
+  function marker(label) { var m = document.createElement('div'); m.className = 'marker'; m.innerHTML = '<span></span><i></i>'; m.firstChild.textContent = label; return m; }
 
-  var isHost = /(^|[#&?])host\b/.test(location.hash + location.search);
+  var hot = window.claude && window.claude.hot;
+  var state = { mode: /(^|#)present$/.test(location.hash) ? 'host' : 'player', i: -1, guesses: [], locked: false };
 
   // ---------- PLAYER ----------
   function startPlayer() {
-    show($('player'), true);
-    var i = -1, score = 0, answered = false;
-    var go = $('go');
+    show($('host'), false); show($('player'), true);
+    var go = $('go'), input = $('guess'), ticks = $('ticks');
+    ticks.innerHTML = '';
+    ROUNDS.forEach(function () { var t = document.createElement('div'); t.className = 'tick'; ticks.appendChild(t); });
 
-    var dots = $('dots');
-    ROUNDS.forEach(function () {
-      var d = document.createElement('div'); d.className = 'dot'; dots.appendChild(d);
-    });
+    function paintTrack() { input.style.setProperty('--pct', (frac(ROUNDS[state.i], +input.value) * 100) + '%'); }
 
     function renderRound() {
-      var r = ROUNDS[i];
-      answered = false;
-      show($('intro'), false); show($('end'), false); show($('round'), true);
-      $('count').textContent = (i + 1) + ' / ' + ROUNDS.length;
-      Array.prototype.forEach.call(dots.children, function (d, k) {
-        d.className = 'dot' + (k < i ? ' done' : k === i ? ' now' : '');
-      });
-      $('song').textContent = r.song;
-      $('artist').textContent = r.artist;
+      var r = ROUNDS[state.i];
+      show($('intro'), false); show($('end'), false); show($('round'), true); show($('tohost'), false);
+      $('count').textContent = (state.i + 1) + ' of ' + ROUNDS.length;
+      Array.prototype.forEach.call(ticks.children, function (t, k) { t.className = 'tick' + (k < state.i ? ' done' : k === state.i ? ' now' : ''); });
+      $('stmt').textContent = 'Statement No. ' + (state.i + 1);
+      $('kind').textContent = r.kind;
+      $('title').textContent = r.title;
       $('meta').textContent = r.meta;
-      $('clue').textContent = r.clue;
-      var opts = $('opts'); opts.innerHTML = '';
-      OPTS.forEach(function (o) {
-        var b = document.createElement('button');
-        b.className = 'opt'; b.type = 'button';
-        b.setAttribute('data-id', o.id);
-        b.innerHTML = '<span></span><span class="tag"></span>';
-        b.firstChild.textContent = o.label;
-        b.addEventListener('click', function () { pick(o.id); });
-        opts.appendChild(b);
-      });
+      $('q').textContent = r.q;
+      $('lo').textContent = r.lo || r.fmt(r.min);
+      $('hi').textContent = r.hi || r.fmt(r.max);
+      input.min = r.min; input.max = r.max; input.step = r.step;
+      input.value = state.guesses[state.i] != null ? state.guesses[state.i] : r.start;
+      input.disabled = false;
+      $('readout').textContent = r.fmt(+input.value);
+      paintTrack();
+      Array.prototype.slice.call($('sliderbox').querySelectorAll('.marker')).forEach(function (m) { m.remove(); });
       show($('reveal'), false);
-      show(go, false);
+      go.textContent = 'Lock it in'; go.disabled = false;
+      state.locked = false;
       window.scrollTo(0, 0);
     }
 
-    function pick(id) {
-      if (answered) return;
-      answered = true;
-      var r = ROUNDS[i], right = id === r.answer;
-      if (right) score++;
-      Array.prototype.forEach.call($('opts').children, function (b) {
-        var bid = b.getAttribute('data-id');
-        b.disabled = true;
-        if (bid === r.answer) { b.classList.add('right'); b.querySelector('.tag').textContent = '✓ Answer'; }
-        else if (bid === id) { b.classList.add('wrong'); b.querySelector('.tag').textContent = 'Your pick'; }
-      });
-      var v = $('verdict');
-      v.textContent = right ? 'Got it.' : 'Not quite. It was “' + LABEL[r.answer] + '.”';
-      v.className = 'verdict ' + (right ? 'yes' : 'no');
+    function lock() {
+      var r = ROUNDS[state.i], v = +input.value;
+      state.guesses[state.i] = v; state.locked = true;
+      input.disabled = true;
+      var m = marker('REAL ' + r.fmt(r.answer));
+      m.style.left = thumbLeft(r, r.answer, 34);
+      $('sliderbox').appendChild(m);
+      $('stamp').textContent = r.stamp;
+      var tag = close(r, v) ? '<b>Right on.</b>' : wasGenerous(r, v) ? '<b>More generous than history.</b>' : 'You guessed lower than what happened.';
+      $('verdict').innerHTML = 'You guessed ' + r.fmt(v) + '. ' + tag;
       $('why').textContent = r.why;
       $('src').textContent = 'Source: ' + r.src;
       show($('reveal'), true);
-      go.textContent = i === ROUNDS.length - 1 ? 'See my score' : 'Next record →';
-      show(go, true);
-      if (navigator.vibrate) { try { navigator.vibrate(right ? 30 : [20, 40, 20]); } catch (e) {} }
+      go.textContent = state.i === ROUNDS.length - 1 ? 'See my statement' : 'Next record →';
+      if (navigator.vibrate) { try { navigator.vibrate(25); } catch (e) {} }
       setTimeout(function () { $('reveal').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 60);
     }
 
     function renderEnd() {
       show($('round'), false); show($('end'), true);
-      $('score').innerHTML = score + '<small> / ' + ROUNDS.length + '</small>';
-      $('scoreline').textContent =
-        score >= 6 ? 'You could have worked at Billboard.' :
-        score >= 4 ? 'Not bad. These charts confused people back then too.' :
-        'Don’t feel bad. Billboard got confused too.';
+      var gen = 0;
+      var list = $('ledger'); list.innerHTML = '';
+      ROUNDS.forEach(function (r, k) {
+        var g = state.guesses[k];
+        if (wasGenerous(r, g)) gen++;
+        var li = document.createElement('li');
+        li.innerHTML = '<span class="t"></span><span class="g"></span><span class="r"></span>';
+        li.children[0].textContent = r.title;
+        li.children[1].textContent = 'you ' + r.fmt(g);
+        li.children[2].textContent = 'real ' + r.fmt(r.answer);
+        list.appendChild(li);
+      });
+      $('score').innerHTML = gen + '<small> of ' + ROUNDS.length + '</small>';
+      $('scoreline').textContent = 'times you guessed the artists got more than they really did.';
       show(go, false); show($('again'), true);
       window.scrollTo(0, 0);
     }
 
-    go.addEventListener('click', function () {
-      if (i < ROUNDS.length - 1) { i++; renderRound(); } else { renderEnd(); }
-    });
-    $('again').addEventListener('click', function () {
-      i = -1; score = 0; show($('again'), false);
-      show($('end'), false); show($('intro'), true);
+    input.oninput = function () { $('readout').textContent = ROUNDS[state.i].fmt(+input.value); paintTrack(); };
+    go.onclick = function () {
+      if (state.i === -1) { state.i = 0; renderRound(); return; }
+      if (!state.locked) { lock(); return; }
+      if (state.i < ROUNDS.length - 1) { state.i++; renderRound(); } else { state.i = ROUNDS.length; renderEnd(); }
+    };
+    $('again').onclick = function () {
+      state.i = -1; state.guesses = []; state.locked = false;
+      show($('again'), false); show($('end'), false); show($('round'), false); show($('intro'), true); show($('tohost'), true);
       go.textContent = 'Start'; show(go, true);
-    });
+      window.scrollTo(0, 0);
+    };
+    $('tohost').onclick = function () { state.mode = 'host'; try { location.hash = 'present'; } catch (e) {} startHost(); };
+
+    // resume (after a live update) or start fresh
+    if (state.i >= 0 && state.i < ROUNDS.length) { var was = state.locked; renderRound(); if (was) lock(); }
+    else if (state.i >= ROUNDS.length) { renderEnd(); }
+    else { show($('intro'), true); show($('round'), false); show($('end'), false); go.textContent = 'Start'; }
   }
 
-  // ---------- HOST ----------
+  // ---------- PRESENTER ----------
+  var hostReady = false;
   function startHost() {
-    show($('host'), true);
-    document.title = 'Which Chart? (screen)';
-    var url = location.href.split('#')[0].split('?')[0];
-    $('url').textContent = url.replace(/^https?:\/\//, '');
-
+    show($('player'), false); show($('host'), true);
+    if (hostReady) return; hostReady = true;
+    var url = (SHARE_URL && SHARE_URL.indexOf('http') === 0) ? SHARE_URL : location.href.split('#')[0];
     try {
-      var qr = qrcode(0, 'M');
-      qr.addData(url);
-      qr.make();
-      var n = qr.getModuleCount(), m = 2, size = n + m * 2, path = '';
-      for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) {
-        if (qr.isDark(r, c)) path += 'M' + (c + m) + ' ' + (r + m) + 'h1v1h-1z';
-      }
-      $('qr').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size +
-        '" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#F3ECDF"/><path d="' + path + '" fill="#1C1714"/></svg>';
-    } catch (e) {
-      $('qr').textContent = 'QR code failed to load. Share the link instead.';
-    }
+      var qr = qrcode(0, 'M'); qr.addData(url); qr.make();
+      var n = qr.getModuleCount(), m = 2, size = n + m * 2, d = '';
+      for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (qr.isDark(r, c)) d += 'M' + (c + m) + ' ' + (r + m) + 'h1v1h-1z';
+      $('qr').innerHTML = '<svg viewBox="0 0 ' + size + ' ' + size + '" shape-rendering="crispEdges" aria-hidden="true"><rect width="100%" height="100%" fill="#F3ECDF"/><path d="' + d + '" fill="#1C1714"/></svg>';
+    } catch (e) { $('qr').innerHTML = '<p>Share the game link instead.</p>'; }
 
-    // timer
     var left = 180, tick = null;
-    function paint() {
-      var mm = Math.floor(left / 60), ss = left % 60;
-      $('timer').textContent = left > 0 ? mm + ':' + (ss < 10 ? '0' : '') + ss : 'Time!';
-      $('timer').classList.toggle('out', left <= 0);
-    }
+    function paint() { var mm = Math.floor(left / 60), ss = left % 60; $('timer').textContent = left > 0 ? mm + ':' + (ss < 10 ? '0' : '') + ss : 'Time!'; $('timer').classList.toggle('out', left <= 0); }
     function toggleTimer() {
       if (tick) { clearInterval(tick); tick = null; $('tstart').textContent = 'Resume timer'; return; }
       if (left <= 0) { left = 180; paint(); }
       $('tstart').textContent = 'Pause timer';
-      tick = setInterval(function () {
-        left--; paint();
-        if (left <= 0) { clearInterval(tick); tick = null; $('tstart').textContent = 'Restart timer'; }
-      }, 1000);
+      tick = setInterval(function () { left--; paint(); if (left <= 0) { clearInterval(tick); tick = null; $('tstart').textContent = 'Restart timer'; } }, 1000);
     }
-    $('tstart').addEventListener('click', toggleTimer);
+    $('tstart').onclick = toggleTimer;
 
-    // walkthrough
     var w = -1, revealed = false;
-    function lobby() {
-      w = -1; show($('walk'), false); show($('lobby'), true);
-      show($('hback'), false); show($('hprev'), false);
-      $('hnext').textContent = 'Go over answers →';
-    }
+    function lobby() { w = -1; show($('walk'), false); show($('lobby'), true); show($('hback'), false); show($('hprev'), false); $('hnext').textContent = 'Go over answers →'; }
     function walk() {
       var r = ROUNDS[w]; revealed = false;
-      show($('lobby'), false); show($('walk'), true);
-      show($('hback'), true); show($('hprev'), true);
-      $('wcount').textContent = 'Record ' + (w + 1) + ' of ' + ROUNDS.length;
-      $('wsong').textContent = r.song; $('wartist').textContent = r.artist; $('wmeta').textContent = r.meta;
-      $('wclue').textContent = r.clue;
-      var box = $('wopts'); box.innerHTML = '';
-      OPTS.forEach(function (o) {
-        var d = document.createElement('div');
-        d.className = 'opt'; d.setAttribute('data-id', o.id);
-        d.innerHTML = '<span></span><span class="tag"></span>';
-        d.firstChild.textContent = o.label;
-        box.appendChild(d);
-      });
-      show($('wreveal'), false);
+      show($('lobby'), false); show($('walk'), true); show($('hback'), true); show($('hprev'), true);
+      $('hstmt').textContent = 'Statement No. ' + (w + 1) + ' of ' + ROUNDS.length;
+      $('hkind').textContent = r.kind; $('htitle').textContent = r.title; $('hmeta').textContent = r.meta; $('hq').textContent = r.q;
+      $('hlo').textContent = r.lo || r.fmt(r.min); $('hhi').textContent = r.hi || r.fmt(r.max);
+      $('hbar').innerHTML = ''; show($('hreveal'), false);
       $('hnext').textContent = 'Reveal';
     }
     function reveal() {
       var r = ROUNDS[w]; revealed = true;
-      Array.prototype.forEach.call($('wopts').children, function (d) {
-        if (d.getAttribute('data-id') === r.answer) { d.classList.add('right'); d.querySelector('.tag').textContent = '✓ Answer'; }
-        else { d.style.opacity = '0.45'; }
-      });
-      $('wverdict').textContent = LABEL[r.answer];
-      $('wwhy').textContent = r.why;
-      $('wsrc').textContent = 'Source: ' + r.src;
-      show($('wreveal'), true);
+      var m = marker('REAL ' + r.fmt(r.answer)); m.style.left = (frac(r, r.answer) * 100) + '%'; $('hbar').appendChild(m);
+      $('hstamp').textContent = r.stamp; $('hwhy').textContent = r.why; $('hsrc').textContent = 'Source: ' + r.src;
+      show($('hreveal'), true);
       $('hnext').textContent = w === ROUNDS.length - 1 ? 'Back to QR code' : 'Next record →';
     }
-    function next() {
-      if (w === -1) { w = 0; walk(); return; }
-      if (!revealed) { reveal(); return; }
-      if (w < ROUNDS.length - 1) { w++; walk(); } else { lobby(); }
-    }
-    function prev() {
-      if (w <= 0) { lobby(); return; }
-      w--; walk();
-    }
-    $('hnext').addEventListener('click', next);
-    $('hprev').addEventListener('click', prev);
-    $('hback').addEventListener('click', lobby);
+    function next() { if (w === -1) { w = 0; walk(); return; } if (!revealed) { reveal(); return; } if (w < ROUNDS.length - 1) { w++; walk(); } else { lobby(); } }
+    function prev() { if (w <= 0) { lobby(); return; } w--; walk(); }
+    $('hnext').onclick = next; $('hprev').onclick = prev; $('hback').onclick = lobby;
     document.addEventListener('keydown', function (e) {
+      if (state.mode !== 'host') return;
       if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
       else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
       else if (e.key === 'Escape') { lobby(); }
@@ -2796,8 +2779,19 @@ var qrcode = function() {
     });
   }
 
-  if (isHost) startHost(); else startPlayer();
+  window.addEventListener('hashchange', function () {
+    if (/(^|#)present$/.test(location.hash)) { state.mode = 'host'; startHost(); }
+    else if (state.mode === 'host') { state.mode = 'player'; startPlayer(); }
+  });
+
+  function start(saved) {
+    if (saved && saved.state) { state.i = saved.state.i; state.guesses = saved.state.guesses || []; state.locked = !!saved.state.locked; }
+    if (state.mode === 'host') startHost(); else startPlayer();
+  }
+  if (hot && hot.snapshot) { try { hot.snapshot(function () { return { state: { i: state.i, guesses: state.guesses, locked: state.locked } }; }); } catch (e) {} }
+  if (hot && hot.ready) hot.ready(start); else start((hot && hot.data) || {});
 })();
 </script>
+
 </body>
 </html>
